@@ -5,6 +5,13 @@
   "scripts": {
     "dev": "next dev --turbopack --port=8998",
     "build": "next build --turbopack",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "push": "drizzle-kit push",
+    "pull": "drizzle-kit pull",
+    "check": "drizzle-kit check",
+    "up": "drizzle-kit up",
+    "studio": "drizzle-kit studio",
     "start": "next start --port=8998",
     "lint": "eslint"
   },
@@ -13,6 +20,7 @@
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.5",
     "next": "15.5.3",
+    "next-auth": "^4.24.11",
     "pg": "^8.16.3",
     "react": "19.1.0",
     "react-dom": "19.1.0"
