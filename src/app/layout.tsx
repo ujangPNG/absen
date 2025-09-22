@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import GA4 from "@/components/GA4"; // Impor dari file .tsx
+import { Suspense } from "react";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Suspense fallback={null}>
+          <GA4 />
+        </Suspense>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
