@@ -4,6 +4,7 @@ import "./globals.css";
 // import Providers from "@/components/Providers";
 import GA4 from "@/components/GA4"; // Impor dari file .tsx
 import { Suspense } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <GA4 />
         </Suspense>
+        <SpeedInsights />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
