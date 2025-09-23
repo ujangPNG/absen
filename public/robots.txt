@@ -1,2 +1,4 @@
-User-agent: Googlebot
-Disallow: /
+# udh di block middleware
+#
+# User-agent: Googlebot
+# Disallow: /
