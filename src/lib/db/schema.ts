@@ -3,7 +3,6 @@ import { pgTable, serial, varchar, timestamp, text, integer, decimal } from "dri
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
-  email: varchar("email", { length: 100 }).unique().notNull(),
 });
 
 export const attendances = pgTable("attendances", {
