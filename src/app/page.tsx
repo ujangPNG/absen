@@ -1,8 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Camera, MapPin, Clock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { InferModel } from 'drizzle-orm';
+import { users } from '@/lib/db/schema';
+
+
 
 interface LocationData {
   latitude: number;
@@ -20,6 +24,15 @@ interface AbsenData {
   address: string;
 }
 
+async function getUsers(): Promise<InferModel<typeof users>[]> {
+    const response = await fetch('/api/users');
+    if (!response.ok) {
+        throw new Error('Failed to fetch users');
+    }
+    return response.json();
+}
+
+
 export default function AbsenPage() {
   const [isCapturing, setIsCapturing] = useState(false);
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -27,6 +40,11 @@ export default function AbsenPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [userId, setUserId] = useState('');
+  const [allUsers, setAllUsers] = useState<InferModel<typeof users>[]>([]);
+
+  useEffect(() => {
+    getUsers().then(setAllUsers);
+  }, []);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -251,21 +269,28 @@ export default function AbsenPage() {
           </p>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 text-gray-900">
           {/* User ID Input */}
           <div>
-            <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-              User ID
+            <label htmlFor="userId" className="block text-sm font-medium text-blue-900 mb-2">
+              Pilih Nama
             </label>
-            <input
-              type="text"
+            <select
               id="userId"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="Masukkan User ID"
+              className="w-full px-4 py-3 border border-blue-900 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               disabled={isCapturing || isSubmitting}
-            />
+            >
+              <option className='text-blue-900' value="" disabled>
+                Pilih nama Anda
+              </option>
+              {allUsers.map((user) => (
+                <option className='text-blue-900' key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Message */}
