@@ -1,0 +1,27 @@
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+exporters:
+  # (Opsional) Cetak trace ke log collector untuk debugging
+  logging:
+    loglevel: debug
+
+  # Kirim trace ke Jaeger
+  jaeger:
+    endpoint: jaeger-all-in-one:14250
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, jaeger]
