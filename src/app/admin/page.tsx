@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { addUser, getUsers, updateUser, deleteUser } from "./action";
 import { users } from "@/lib/db/schema";
+import Attendance from "@/components/Attendance";
 
 type User = typeof users.$inferSelect;
 
@@ -11,6 +12,7 @@ export default function AdminPage() {
   const [name, setName] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState("users");
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -95,54 +97,75 @@ export default function AdminPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Admin Page</h1>
-      <form onSubmit={handleAddUserSubmit} className="mb-4">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter user name"
-          className="border p-2"
-        />
-        <button type="submit" className="bg-green-500 text-white p-2">
-          Add User
+      <div className="flex mb-4 border-b">
+        <button
+          className={`py-2 px-4 ${activeTab === "users" ? "border-b-2 border-blue-500" : ""}`}
+          onClick={() => setActiveTab("users")}
+        >
+          Users
         </button>
-      </form>
+        <button
+          className={`py-2 px-4 ${activeTab === "attendance" ? "border-b-2 border-blue-500" : ""}`}
+          onClick={() => setActiveTab("attendance")}
+        >
+          Attendance
+        </button>
+      </div>
 
-      <h2 className="text-xl font-bold mb-2">User List</h2>
-      <ul className="space-y-2">
-        {users.map((user) => (
-          <li key={user.id} className="flex items-center justify-between border p-2">
-            {editingUser && editingUser.id === user.id ? (
-              <form onSubmit={handleUpdateUser} className="flex items-center">
-                <input
-                  type="text"
-                  value={editingUser.name}
-                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                  className="border p-1"
-                />
-                <button type="submit" className="bg-blue-500 text-white p-1 ml-2">
-                  Save
-                </button>
-                <button onClick={() => setEditingUser(null)} className="bg-gray-500 text-white p-1 ml-2">
-                  Cancel
-                </button>
-              </form>
-            ) : (
-              <>
-                <span>{user.name}</span>
-                <div>
-                  <button onClick={() => handleEditUser(user)} className="bg-yellow-500 text-white p-1 mr-2">
-                    Edit
-                  </button>
-                  <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white p-1">
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+      {activeTab === "users" && (
+        <div>
+          <form onSubmit={handleAddUserSubmit} className="mb-4">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter user name"
+              className="border p-2"
+            />
+            <button type="submit" className="bg-green-500 text-white p-2">
+              Add User
+            </button>
+          </form>
+
+          <h2 className="text-xl font-bold mb-2">User List</h2>
+          <ul className="space-y-2">
+            {users.map((user) => (
+              <li key={user.id} className="flex items-center justify-between border p-2">
+                {editingUser && editingUser.id === user.id ? (
+                  <form onSubmit={handleUpdateUser} className="flex items-center">
+                    <input
+                      type="text"
+                      value={editingUser.name}
+                      onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                      className="border p-1"
+                    />
+                    <button type="submit" className="bg-blue-500 text-white p-1 ml-2">
+                      Save
+                    </button>
+                    <button onClick={() => setEditingUser(null)} className="bg-gray-500 text-white p-1 ml-2">
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <span>{user.name}</span>
+                    <div>
+                      <button onClick={() => handleEditUser(user)} className="bg-yellow-500 text-white p-1 mr-2">
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white p-1">
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {activeTab === "attendance" && <Attendance />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { attendances } from "@/lib/db/schema";
+import { attendances, users } from "@/lib/db/schema";
 import { s3Client, bucketName } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import dayjs from 'dayjs';
@@ -91,6 +91,45 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
-  return NextResponse.json({ status: 'ok' })
+import { sql, eq } from "drizzle-orm";
+
+export async function GET(req: NextRequest) {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  try {
+    const { searchParams } = new URL(req.url);
+    const date = searchParams.get('date');
+
+    if (!date) {
+      return NextResponse.json(
+        { error: "Date parameter is required" },
+        { status: 400 }
+      );
+    }
+    
+    const allAttendances = await db
+    .select({
+      id: attendances.id,
+      userName: users.name,
+      timestamp: attendances.timestamp,
+      photoBlobUrl: attendances.photoBlobUrl,
+      address: attendances.address,
+    })
+    .from(attendances)
+    .leftJoin(users, eq(attendances.userId, users.id))
+    .where(sql`DATE(attendances.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Jakarta') = ${date}`)
+    .orderBy(attendances.id);
+
+    return NextResponse.json(allAttendances);
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Failed to fetch attendance',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      }, 
+      { status: 500 }
+    );
+  }
 }
