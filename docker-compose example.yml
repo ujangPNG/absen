@@ -10,8 +10,8 @@ services:
     volumes:
       - ./minio-data:/data # Menyimpan data di folder lokal './minio-data'
     environment:
-      - MINIO_ROOT_USER=juang # GANTI INI
-      - MINIO_ROOT_PASSWORD=serverzufar # GANTI INI
-      - MINIO_BROWSER_REDIRECT_URL=https://m-console.zebua.site
+      - MINIO_ROOT_USER= # GANTI INI
+      - MINIO_ROOT_PASSWORD= # GANTI INI
+      - MINIO_BROWSER_REDIRECT_URL=https://
     command: server /data --console-address "9001"
     restart: unless-stopped
