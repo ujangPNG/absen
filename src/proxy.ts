@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// middleware anti bot
+
 const blockedBots = [
   // 'Googlebot',
   // 'Google-InspectionTool',
@@ -27,7 +29,7 @@ const blockedBots = [
   'SeznamBot'
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const ua = request.headers.get('user-agent') || '';
 
   const forwardedFor = request.headers.get('x-forwarded-for');
@@ -39,7 +41,7 @@ export function middleware(request: NextRequest) {
     'unknown';
 
   const isBlocked = blockedBots.some(bot => ua.includes(bot));
-  // console.log(`[UA CHECK] UA: "${ua}" | IP: ${ip} | Path: ${request.nextUrl.pathname}`); //aish ini bising kat console  
+  // console.log(`[UA CHECK] UA: "${ua}" | IP: ${ip} | Path: ${request.nextUrl.pathname}`); //aish ini bising kat console
 
   if (isBlocked) {
   fetch(`${request.nextUrl.origin}/api/log`, {
